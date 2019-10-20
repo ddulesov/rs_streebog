@@ -12,7 +12,7 @@ use std::arch::x86_64::*;
 use crate::constant::{AX, CX, BUFFER512, BUFFER0};
 
 #[repr(align(32))]
-pub struct X512i {
+struct X512i {
     xmm: [__m256i;2]
 }
 
@@ -21,7 +21,7 @@ impl X512i {
 
 
     #[inline(always)]
-    pub unsafe fn store(&self, m: &mut B512){
+    unsafe fn store(&self, m: &mut B512){
         let  ptr = m.m256i.as_mut_ptr();
         _mm256_store_si256( ptr, self.xmm[0] );
         _mm256_store_si256( ptr.add(1), self.xmm[1] );
@@ -30,18 +30,18 @@ impl X512i {
     
 
     #[inline(always)]
-    pub unsafe fn xor_r(&mut self, other: &X512i){
+    unsafe fn xor_r(&mut self, other: &X512i){
         self.xmm[0] = _mm256_xor_si256(self.xmm[0], other.xmm[0] );
         self.xmm[1] = _mm256_xor_si256(self.xmm[1], other.xmm[1] );
     }
 
     #[inline(always)]
-    pub unsafe fn into_xor_m(&self, other: &B512)->B512{
+    unsafe fn into_xor_m(&self, other: &B512)->B512{
         self.into_xor_r( &X512i::from(other) )
     }
 
     #[inline(always)]
-    pub unsafe fn into_xor_r(&self, other: &X512i)->B512{
+    unsafe fn into_xor_r(&self, other: &X512i)->B512{
         let mut out: B512 = Default::default();
         let ptr: *mut __m256i = out.m256i.as_mut_ptr();
 
@@ -121,7 +121,7 @@ pub trait Digest {
 
 
 #[repr(align(32))]
-pub union B512{
+pub(crate) union B512{
     pub b8: [u8;64],
     pub b64: [u64; 8],
     pub b32: [u32; 16],
@@ -130,17 +130,17 @@ pub union B512{
 
 
 impl B512 {
-    pub fn new() -> B512 {
+    fn new() -> B512 {
         B512{ b64: [0u64; 8] }
     }
 
     #[inline(always)]
-    pub unsafe  fn add(&mut self, other: &B512){
+    unsafe  fn add(&mut self, other: &B512){
         self.add_bytes(other.as_ptr())
     }
 
     #[inline(always)]
-    pub unsafe  fn add_bytes(&mut self, other: *const u8){
+    unsafe  fn add_bytes(&mut self, other: *const u8){
         let mut c:u8 = 0;
 
         let other = std::slice::from_raw_parts(other as *const u64, 8).iter();
@@ -150,12 +150,12 @@ impl B512 {
     }
 
     #[inline(always)]
-    pub unsafe fn as_ptr(&self) -> *const u8{
+    unsafe fn as_ptr(&self) -> *const u8{
         self.b8.as_ptr()
     }
 
     #[inline(always)]
-    pub unsafe fn as_mut_ptr(&mut self) -> *mut u8{
+    unsafe fn as_mut_ptr(&mut self) -> *mut u8{
         self.b8.as_mut_ptr()
     }
 

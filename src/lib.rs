@@ -31,7 +31,7 @@ mod tests {
             let mut h512 = crate::Streebog512::new();
             h512.input( input );
 
-            let result = h512.finish();
+            let _result = h512.finish();
         });
 
         b.bytes = input.len() as u64;
@@ -45,7 +45,7 @@ mod tests {
             let mut h256 = crate::Streebog256::new();
             h256.input( input );
 
-            let result = h256.finish();
+            let _result = h256.finish();
         });
 
         b.bytes = input.len() as u64;
@@ -70,7 +70,7 @@ mod tests {
             let mut h = crate::Streebog512::new();
             h.input( input );
 
-            let result = h.finish();
+            let _result = h.finish();
         });
 
         b.bytes = input.len() as u64;
