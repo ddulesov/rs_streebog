@@ -1,11 +1,48 @@
-use std::marker::PhantomData;
-use std::convert::From;
+//! An implementation of the [Streebog][1] cryptographic hash function. It's
+//! officially known as GOST R 34.11-2012.
+//!
+//! [1]: https://en.wikipedia.org/wiki/Streebog
+//!
+//! This implementation returns digest result using little-endian encoding
+//! in the form of array with least significant octets first, thus compared to
+//! specifications which uses big-endian result will have "reversed" order of
+//! octets.
+//!
+//! # Usage
+//!
+//! An example of using `Streebog512` and `Streebog256` is:
+//!
+//! ```rust
+//! use streebog::{Digest, Streebog256, Streebog512};
+//!
+//! // create a hasher object, to use it do not forget to import `Digest` trait
+//! let mut hasher = Streebog256::new();
+//! // write input message
+//! hasher.input(b"input data");
+//! // or process stream
+//! // for input_data in stream {
+//! //    hasher.input( input_data );
+//! // }
+//! // read hash digest (it will consume hasher)
+//! let result = hasher.finish();
+//!
+//! // same for Streebog512
+//! let mut hasher = Streebog512::new();
+//! hasher.input(b"input data");
+//! let result = hasher.finish();
+//! ```
 
-use std::mem::{ MaybeUninit, transmute };
-use std::ptr::copy_nonoverlapping;
-use std::ptr::write_bytes;
-use std::default::Default;
-use std::fmt;
+
+use std::{
+    fmt,
+    mem::{
+         MaybeUninit, transmute 
+    },
+    marker::PhantomData,
+    default::Default,
+    convert::From,
+    ptr::{ copy_nonoverlapping, write_bytes}
+};
 
 #[cfg(target_arch = "x86_64")]
 use std::arch::x86_64::*;
@@ -18,17 +55,13 @@ struct X512i {
 
 //#[cfg(target_feature = "avx2")]
 impl X512i {
-
-
     #[inline(always)]
     unsafe fn store(&self, m: &mut B512){
         let  ptr = m.m256i.as_mut_ptr();
         _mm256_store_si256( ptr, self.xmm[0] );
         _mm256_store_si256( ptr.add(1), self.xmm[1] );
-
     }
     
-
     #[inline(always)]
     unsafe fn xor_r(&mut self, other: &X512i){
         self.xmm[0] = _mm256_xor_si256(self.xmm[0], other.xmm[0] );
@@ -119,7 +152,6 @@ pub trait Digest {
     fn output_size(&self) -> usize;
 }
 
-
 #[repr(align(32))]
 pub(crate) union B512{
     pub b8: [u8;64],
@@ -127,7 +159,6 @@ pub(crate) union B512{
     pub b32: [u32; 16],
     pub m256i: [__m256i; 2],
 }
-
 
 impl B512 {
     fn new() -> B512 {
@@ -226,7 +257,6 @@ impl B512 {
 
     #[inline(always)]
     unsafe fn g(&mut self, n: &B512, m: *const u8){
-        
         //self is h (hash buffer)
         let mut key:X512i = X512i::from(&*self).into_xor_m(n).lps() ;
         let mut buffer:X512i = X512i::from( m );
@@ -241,7 +271,6 @@ impl B512 {
         key.xor_r( &X512i::from(&*self) );
 
         key.store( self );
-
     }
 }
 
@@ -294,8 +323,6 @@ pub struct StreeBog<T:DigestBlock> {
     phantom: PhantomData<T>,
 }
 
-
-
 impl<T> fmt::Debug for StreeBog<T> 
     where T: DigestBlock
 {
@@ -316,7 +343,7 @@ impl<T> StreeBog<T>
     }
 
     #[inline(always)]
-    pub unsafe fn pad(&mut self){
+    unsafe fn pad(&mut self){
         if self.bufsize < 64 {
             let l = 64 - self.bufsize;
             let ptr: *mut u8 =   self.buffer.as_mut_ptr().add(self.bufsize);//  self.buffer.b8[self.bufsize..64].as_mut_ptr();
@@ -344,7 +371,6 @@ impl<T> StreeBog<T>
 
         self.n.add( &buf );
         self.sigma.add( &self.buffer );
-        //buf = B512::new();
 
         self.h.g( &BUFFER0, self.n.as_ptr());
         self.h.g( &BUFFER0, self.sigma.as_ptr());

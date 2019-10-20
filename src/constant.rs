@@ -1,3 +1,6 @@
+//! Constants defined in the Streebog specification
+//! and precalculated GF table
+
 use crate::streebog::B512;
 
 pub(crate) static BUFFER512: B512 = B512{ b64: [0x0000000000000200u64, 0x0u64, 0x0u64, 0x0u64, 0x0u64, 0x0u64, 0x0u64, 0x0u64] };
