@@ -1,4 +1,5 @@
 # rs_streebog
+[![Build Status](https://travis-ci.com/ddulesov/rs_streebog.svg?branch=master)](https://travis-ci.com/ddulesov/rs_streebog)
 rust  [streebog](https://en.wikipedia.org/wiki/Streebog) hash SIMD accelerated implementation  
 
 ## Requirements
