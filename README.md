@@ -1,11 +1,12 @@
 # rs_streebog
-[![Build Status](https://travis-ci.com/ddulesov/rs_streebog.svg?branch=master)](https://travis-ci.com/ddulesov/rs_streebog)
 rust  [streebog](https://en.wikipedia.org/wiki/Streebog) hash SIMD accelerated implementation  
+[![Build Status](https://travis-ci.com/ddulesov/rs_streebog.svg?branch=master)](https://travis-ci.com/ddulesov/rs_streebog)
+
 
 ## Requirements
-x86_64 CPU with AVX2 support (Haswell arch  or newer )
+x86_64 AVX2 capable CPU (Haswell or newer )
 
-On Core i5 4210U (Haswell 1.7 GHz) give me 65MB/c hash speed  
+On Core i5 4210U (Haswell 1.7 GHz) give me 74MB/sec   
 
 ## Usage
 

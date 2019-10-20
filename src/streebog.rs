@@ -262,6 +262,7 @@ impl B512 {
         key.xor_r(&X512i::from(&*self));
 
         key.store(self);
+	_mm256_zeroupper();
     }
 }
 
@@ -372,6 +373,7 @@ where
         self.h.g(&self.n, data);
         self.n.add(&BUFFER512);
         self.sigma.add_bytes(data);
+	//_mm256_zeroupper();
     }
 
     unsafe fn stage3(&mut self) {
@@ -386,6 +388,7 @@ where
 
         self.h.g(&BUFFER0, self.n.as_ptr());
         self.h.g(&BUFFER0, self.sigma.as_ptr());
+	//_mm256_zeroupper();
     }
 }
 

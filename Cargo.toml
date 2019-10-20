@@ -8,5 +8,9 @@ edition = "2018"
 
 [dependencies]
 
+[profile.bench]
+lto = true
+overflow-checks = false
+
 [dev-dependencies]
 hex = "0.4"
