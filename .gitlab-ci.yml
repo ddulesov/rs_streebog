@@ -1,0 +1,5 @@
+image: "rust:1.41"
+
+test:
+  script:
+    - cargo test --all
