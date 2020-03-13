@@ -1,12 +1,8 @@
-#![feature(test)]
 mod constant;
 mod streebog;
 
 #[cfg(test)]
 extern crate hex;
-
-#[cfg(test)]
-extern crate test;
 
 pub use crate::streebog::{Digest, StreeBog, U256, U512};
 pub type Streebog256 = StreeBog<U256>;
@@ -14,58 +10,10 @@ pub type Streebog512 = StreeBog<U512>;
 
 #[cfg(test)]
 mod tests {
-    //use core::arch::x86_64::*;
-    use super::test::Bencher;
     use crate::streebog::Digest;
 
     fn hash_from_str(hexstr: &str) -> Vec<u8> {
         hex::decode(hexstr).unwrap()
-    }
-
-    #[bench]
-    fn streebog512(b: &mut Bencher) {
-        let input = b"012345678901234567890123456789012345678901234567890123456789012";
-
-        b.iter(|| {
-            let mut h512 = crate::Streebog512::new();
-            h512.input(input);
-
-            let _result = h512.finish();
-        });
-
-        b.bytes = input.len() as u64;
-    }
-
-    #[bench]
-    fn streebog256(b: &mut Bencher) {
-        let input = b"012345678901234567890123456789012345678901234567890123456789012";
-
-        b.iter(|| {
-            let mut h256 = crate::Streebog256::new();
-            h256.input(input);
-
-            let _result = h256.finish();
-        });
-
-        b.bytes = input.len() as u64;
-    }
-
-    #[bench]
-    fn streebog_long(b: &mut Bencher) {
-	let mut input = [0u8; 8192];
-
-	for i in 0..8192 {
-	 	input[i] =  (i & 0xFF) as u8;
-	}
-
-        b.iter(|| {
-            let mut h = crate::Streebog512::new();
-            h.input(input.as_ref());
-
-            let _result = h.finish();
-        });
-
-        b.bytes = input.len() as u64;
     }
 
     #[test]

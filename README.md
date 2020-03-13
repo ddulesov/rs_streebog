@@ -5,7 +5,6 @@ rust  [streebog](https://en.wikipedia.org/wiki/Streebog) hash SIMD accelerated i
 
 ## Requirements
 x86_64 AVX2 capable CPU (Haswell or newer )
-
 On Core i5 4210U (Haswell 1.7 GHz) give me 74MB/sec   
 
 ## Usage
